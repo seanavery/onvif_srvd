@@ -1,9 +1,40 @@
+# name: Build and create release asset for release
+
+# on:
+#   release:
+#     types:
+#       - published
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+#       - name: Install dependencies
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y flex bison byacc make cmake m4
+#           sudo apt-get install -y openssl libssl-dev zlib1g-dev libcrypto++8
+#           sudo apt-get install -y gsoap libgsoap-dev
+#       - name: Build binary
+#         run: |
+#           cmake -B build . -DUSE_GSOAP_STATIC_LIB=1
+#           cmake --build build
+#       - name: Upload release asset
+#         uses: actions/upload-release-asset@v1
+#         with:
+#           upload_url: ${{ github.event.release.upload_url }}
+#           asset_path: build/onvif_srvd
+#           asset_name: onvif_srvd
+#           asset_content_type: application/octet-stream
+
 name: Build and create release asset for release
 
 on:
-  release:
-    types:
-      - published
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -21,10 +52,6 @@ jobs:
         run: |
           cmake -B build . -DUSE_GSOAP_STATIC_LIB=1
           cmake --build build
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: build/onvif_srvd
-          asset_name: onvif_srvd
-          asset_content_type: application/octet-stream
+      - name: Verify build output
+        run: |
+          ls -l build
