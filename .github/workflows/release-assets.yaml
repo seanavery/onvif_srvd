@@ -34,7 +34,10 @@ name: Build and create release asset for release
 on:
   pull_request:
     branches:
-      - main
+      - master
+  push:
+    branches:
+      - '*'
 
 jobs:
   build:
