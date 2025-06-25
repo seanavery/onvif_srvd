@@ -1,11 +1,12 @@
 name: Build onvif_srvd
+
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
