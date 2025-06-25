@@ -1,4 +1,4 @@
-# name: Build and create release asset for release
+# name: Build and create release asset
 
 # on:
 #   release:
@@ -8,6 +8,9 @@
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         architecture: [amd64, arm64]
 #     steps:
 #       - name: Checkout code
 #         uses: actions/checkout@v2
@@ -19,22 +22,22 @@
 #           sudo apt-get install -y gsoap libgsoap-dev
 #       - name: Build binary
 #         run: |
-#           cmake -B build . -DUSE_GSOAP_STATIC_LIB=1
+#           cmake -B build . -DUSE_GSOAP_STATIC_LIB=1 -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.architecture }}
 #           cmake --build build
 #       - name: Upload release asset
 #         uses: actions/upload-release-asset@v1
 #         with:
 #           upload_url: ${{ github.event.release.upload_url }}
-#           asset_path: build/onvif_srvd
-#           asset_name: onvif_srvd
+#           asset_path: build/onvif_srvd-${{ matrix.architecture }}
+#           asset_name: onvif_srvd-${{ matrix.architecture }}-linux
 #           asset_content_type: application/octet-stream
 
-name: Build and create release asset for release
+name: Build and create release asset
 
 on:
   pull_request:
     branches:
-      - master
+      - '*'
   push:
     branches:
       - '*'
@@ -42,6 +45,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture: [amd64, arm64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -53,7 +59,7 @@ jobs:
           sudo apt-get install -y gsoap libgsoap-dev
       - name: Build binary
         run: |
-          cmake -B build . -DUSE_GSOAP_STATIC_LIB=1
+          cmake -B build . -DUSE_GSOAP_STATIC_LIB=1 -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.architecture }}
           cmake --build build
       - name: Verify build output
         run: |
